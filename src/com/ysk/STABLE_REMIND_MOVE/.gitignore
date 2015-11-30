@@ -13,3 +13,6 @@
 /sendmail.class
 /set_flowc.class
 /update_data.class
+/d.class
+/detail_add_before.class
+/table_add_data.class

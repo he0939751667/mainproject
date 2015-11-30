@@ -26,27 +26,32 @@ public class add extends _hproc {
 		String DEP_NAME = getValue("DEP_NAME");
 		String DATE = getValue("DATE");
 		String CAUSE = getValue("CAUSE");
-		String MOVE_TYPE = getValue("MOVE_TYPE");
-		//查詢和設定異動類型
-		String sql = "select TYPE from STABLEREMIND_MOVE_TYPE_LIST where MOVE_TYPE='"
-				+ MOVE_TYPE + "'";
-		String r[][] = t.queryFromPool(sql);
-		String TYPE = r[0][0];
-		//取得異動內容相關資料
-		String HURRY_PEOPLE = getValue("HURRY_PEOPLE");
-		String VERIFICATION = getValue("VERIFICATION");
-		String SAMPLE_POINT = getValue("SAMPLE_POINT");
-		String[] field = { "PNO","MPNO", "EMPID", "DATE", "CAUSE", "MOVE_TYPE",
-				"HURRY_PEOPLE", "VERIFICATION", "SAMPLE_POINT" };
-		String[] field_data = { MPNO, EMPID, DATE, CAUSE, TYPE, HURRY_PEOPLE,
-				VERIFICATION, SAMPLE_POINT };
-		String[] forget_data = { MPNO, EMPID, DATE, CAUSE, MOVE_TYPE};
-		String[] forget_data_name = { "單號", "員工編號", "申請日期", "申請原因", "異動類別" };
-		// 預防forget，提醒欄位不得為空
-		Boolean forget = forget_field(forget_data,forget_data_name);
-		if(forget==false) return value;
-		// 新增至資料庫
-		String ret[][] = add_data(tablename,field,field_data);
+		
+		//取得table的值
+		String[][] getData = getTableData("table1");
+		for(int i=0;i<getData.length;i++){
+			String MOVE_TYPE = getData[i][0];
+			//查詢和設定異動類型
+			String sql = "select TYPE from STABLEREMIND_MOVE_TYPE_LIST where MOVE_TYPE='"
+					+ MOVE_TYPE + "'";
+			String r[][] = t.queryFromPool(sql);
+			String TYPE = r[0][0];
+			//取得異動內容相關資料
+			String HURRY_PEOPLE = getData[i][1];
+			String VERIFICATION = getData[i][2];
+			String SAMPLE_POINT = getData[i][3];
+			String[] field = { "PNO","MPNO", "EMPID", "DATE", "CAUSE", "MOVE_TYPE",
+					"HURRY_PEOPLE", "VERIFICATION", "SAMPLE_POINT" };
+			String[] field_data = { MPNO, EMPID, DATE, CAUSE, TYPE, HURRY_PEOPLE,
+					VERIFICATION, SAMPLE_POINT };
+			String[] forget_data = { MPNO, EMPID, DATE, CAUSE, MOVE_TYPE};
+			String[] forget_data_name = { "單號", "員工編號", "申請日期", "申請原因", "異動類別" };
+			// 預防forget，提醒欄位不得為空
+			Boolean forget = forget_field(forget_data,forget_data_name);
+			if(forget==false) return value;
+			// 新增至資料庫
+			String ret[][] = add_data(tablename,field,field_data);
+		}
 		//發送mail
 		String content = "";
 		content = "\r\n"
